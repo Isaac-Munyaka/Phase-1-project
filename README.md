@@ -1,310 +1,271 @@
-# Phase 1 Project Description
 
-You've made it all the way through the first phase of this course - take a minute to celebrate your awesomeness!
+AN ANALYSIS TO INVESTIGATE THE KIND OF MOVIES THAT
+ARE PERFORMING WELL AT THE BOX OFFICE IN TERMS OF
+RATINGS, FOREIGN GROSS AND INSIGHTS.
 
-![awesome](https://raw.githubusercontent.com/learn-co-curriculum/dsc-phase-1-project-v2-4/master/awesome.gif)
+Business Understanding
 
-Now you will put your new skills to use with a large end-of-Phase project!
+Microsoft sees all the big companies creating original video content and they want to get in on the fun. They have decided to create a new movie studio, but they don’t know anything about creating movies. I am therefore charged with exploring what types of films are currently doing the best at the box office and then translate those findings into actionable insights that the head of Microsoft's new movie studio can use to help decide what type
+of films to create.
 
-In this project description, we will cover:
+Problem Statement
 
-* [***Project Overview:***](#project-overview) the project goal, audience, and dataset
-* [***Deliverables:***](#deliverables) the specific items you are required to produce for this project
-* [***Grading:***](#grading) how your project will be scored
-* [***Getting Started:***](#getting-started) guidance for how to begin your first project
+Microsoft stakeholders and top management are finding it hard understanding the specific movies that are performing well in terms of ratings, foreign gross, insights such as number of votes and genres that performed well. Without understanding these metrics it will be hard for them to create original video content through their movie studio. They are not sure where to start in order to investigate these metrics.
 
-## Project Overview
+Project's goal
 
-For this project, you will use exploratory data analysis to generate insights for a business stakeholder.
+Therefore this project is focused on investigating the above metrics inorder to come up with a decisive action to enable the microsoft studio to create only movies that are going to perform well internationally and be a good investment plan. Only the kind of movies that attract great insights through high number of votes, high foreign gross and higher ratings will be prioritised in the production studio.
 
-### Business Problem
 
-Microsoft sees all the big companies creating original video content and they want to get in on the fun. They have decided to create a new movie studio, but they don’t know anything about creating movies. You are charged with exploring what types of films are currently doing the best at the box office. You must then translate those findings into actionable insights that the head of Microsoft's new movie studio can use to help decide what type of films to create.
+# importing the python libraries that I will use for this project
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import sqlite3
 
-### The Data
 
-In the folder `zippedData` are movie datasets from:
+Data Understanding
 
-* [Box Office Mojo](https://www.boxofficemojo.com/)
-* [IMDB](https://www.imdb.com/)
-* [Rotten Tomatoes](https://www.rottentomatoes.com/)
-* [TheMovieDB](https://www.themoviedb.org/)
-* [The Numbers](https://www.the-numbers.com/)
+In this analysis I used three different datasets which are from Box office Mojo, IMDB SQLite Database and The movie Database. The datasets will be cleaned before performing exploratory data analysis. The datasets were chosen since they have data on foreign gross, domestic gross, genres, insights through number of votes the movies attracted and the movie ratings. This will present a clear picture of how different movies performed and thus lead to the stakeholders and top management at Microsoft making informed decisions before production at the new movie studio.
 
-Because it was collected from various locations, the different files have different formats. Some are compressed CSV (comma-separated values) or TSV (tab-separated values) files that can be opened using spreadsheet software or `pd.read_csv`, while the data from IMDB is located in a SQLite database.
+1. BOX OFFICE MOJO DATASET
 
-![movie data erd](https://raw.githubusercontent.com/learn-co-curriculum/dsc-phase-1-project-v2-4/master/movie_data_erd.jpeg)
+I will first start by reading the dataset inorder to understand the data and the kind of measurements that I will
+use to determine the success of movies
 
-Note that the above diagram shows ONLY the IMDB data. You will need to look carefully at the features to figure out how the IMDB data relates to the other provided data files.
+bom_df=pd.read_csv("zippedData/bom.movie_gross.csv.gz")
 
-It is up to you to decide what data from this to use and how to use it. If you want to make this more challenging, you can scrape websites or make API calls to get additional data. If you are feeling overwhelmed or behind, we recommend you use only the following data files:
+bom_df
 
-* `im.db.zip`
-  * Zipped SQLite database (you will need to unzip then query using SQLite)
-  * `movie_basics` and `movie_ratings` tables are most relevant
-* `bom.movie_gross.csv.gz`
-  * Compressed CSV file (you can open without expanding the file using `pd.read_csv`)
+Size of the dataset
 
-### Key Points
+The above dataset has 3387 rows and 5 columns
 
-* **Your analysis should yield three concrete business recommendations.** The ultimate purpose of exploratory analysis is not just to learn about the data, but to help an organization perform better. Explicitly relate your findings to business needs by recommending actions that you think the business (Microsoft) should take.
+bom_df.shape
 
-* **Communicating about your work well is extremely important.** Your ability to provide value to an organization - or to land a job there - is directly reliant on your ability to communicate with them about what you have done and why it is valuable. Create a storyline your audience (the head of Microsoft's new movie studio) can follow by walking them through the steps of your process, highlighting the most important points and skipping over the rest.
+Checking for missing values
 
-* **Use plenty of visualizations.** Visualizations are invaluable for exploring your data and making your findings accessible to a non-technical audience. Spotlight visuals in your presentation, but only ones that relate directly to your recommendations. Simple visuals are usually best (e.g. bar charts and line graphs), and don't forget to format them well (e.g. labels, titles).
+Missing values can occur for a variety of reasons, including measurement error, data entry errors and non response. The presence of missing data can cause biased estimates, inaccurate results, misleading visualisations as well as a loss of information. By checking, identifying and addressing missing values before
+analysis, I will be able to increase the accuracy and reliability of my results
 
-## Deliverables
 
-There are three deliverables for this project:
+# getting the sum of all missing values in the dataframe
+bom_df.isna().sum()
 
-* A **non-technical presentation**
-* A **Jupyter Notebook**
-* A **GitHub repository**
+# From the dataframe studio column has five missing values, domestic_gross 28 missing val
+ues and
+# foreign_gross a total of 1350 missing values
 
-### Non-Technical Presentation
+# since studio column has no much significance in this analysis, I decided to drop it
 
-The non-technical presentation is a slide deck presenting your analysis to business stakeholders.
+bom_df.drop(columns=["studio"], inplace=True)
 
-* ***Non-technical*** does not mean that you should avoid mentioning the technologies or techniques that you used, it means that you should explain any mentions of these technologies and avoid assuming that your audience is already familiar with them.
-* ***Business stakeholders*** means that the audience for your presentation is Microsoft, not the class or teacher. Do not assume that they are already familiar with the specific business problem, but also do not explain to them what Microsoft is.
+bom_df
 
-The presentation describes the project ***goals, data, methods, and results***. It must include at least ***three visualizations*** which correspond to ***three business recommendations***.
+Filling missing values in domestic_gross with its mean
 
-We recommend that you follow this structure, although the slide titles should be specific to your project:
+This column cannot be dropped as it is of great significance as a metric for movie perfomance in terms of gross
+revenue. Therefore missing values will be filled with the mean of domestic_gross
 
-1. Beginning
-    * Overview
-    * Business Understanding
-2. Middle
-    * Data Understanding
-    * Data Analysis
-3. End
-    * Recommendations
-    * Next Steps
-    * Thank You
-       * This slide should include a prompt for questions as well as your contact information (name and LinkedIn profile)
+bom_df["domestic_gross"].fillna(bom_df["domestic_gross"].mean(),inplace=True)
 
-You will give a live presentation of your slides and submit them in PDF format on Canvas. The slides should also be present in the GitHub repository you submit with a file name of `presentation.pdf`.
+bom_df
 
-The graded elements of the presentation are:
+bom_df.isna().sum()
 
-* Presentation Content
-* Slide Style
-* Presentation Delivery and Answers to Questions
+# domestic_gross has 0 missing values after filling with mean
 
-See the [Grading](#grading) section for further explanation of these elements.
+Addressing missing values in foreign_gross
 
-For further reading on creating professional presentations, check out:
+For foreign gross I made an assumption that the missing values are as a result of the movies having 0 international sales This might have been due to no international releases for those movies that have missing values Therefore the best strategy was to fill with 0s since this column is vital in the analysis and cannot be dropped
 
-* [Presentation Content](https://github.com/learn-co-curriculum/dsc-project-presentation-content)
-* [Slide Style](https://github.com/learn-co-curriculum/dsc-project-slide-design)
+bom_df["foreign_gross"].fillna(0, inplace=True)
 
-### Jupyter Notebook
+bom_df
 
-The Jupyter Notebook is a notebook that uses Python and Markdown to present your analysis to a data science audience.
+bom_df.isna().sum()
 
-* ***Python and Markdown*** means that you need to construct an integrated `.ipynb` file with Markdown (headings, paragraphs, links, lists, etc.) and Python code to create a well-organized, skim-able document.
-  * The notebook kernel should be restarted and all cells run before submission, to ensure that all code is runnable in order.
-  * Markdown should be used to frame the project with a clear introduction and conclusion, as well as introducing each of the required elements.
-* ***Data science audience*** means that you can assume basic data science proficiency in the person reading your notebook. This differs from the non-technical presentation.
+title 0
+domestic_gross 0
+foreign_gross 1350
+year 0
+dtype: int64
 
-Along with the presentation, the notebook also describes the project ***goals, data, methods, and results***. It must include at least ***three visualizations*** which correspond to ***three business recommendations***.
+# There are no missing values in the dataframe now
+Checking for duplicates in the data
 
-You will submit the notebook in PDF format on Canvas as well as in `.ipynb` format in your GitHub repository.
+By identifying and removing duplicates, I want to ensure that each observation in the Box office Mojo dataset is represented only once. This will help to ensure data accuracy, efficiency, and consistency, and thus help in
+obtaining reliable and meaningful insights from the data.
 
-The graded elements for the Jupyter Notebook are:
+bom_df.duplicated().value_counts()
 
-* Business Understanding
-* Data Understanding
-* Data Preparation
-* Data Analysis
-* Visualization
-* Code Quality
+# False indicates that the data has no duplicates
 
-See the [Grading](#grading) section for further explanation of these elements.
+Identfying top 20 movies with high foreign gross
 
-### GitHub Repository
+# Converting foreign gross to numeric type
+bom_df["foreign_gross"] = pd.to_numeric(bom_df["foreign_gross"], errors="coerce")
+# Sorting
+top_20_df=bom_df.sort_values("foreign_gross", ascending=False).head(20)
+top_20_df
 
-The GitHub repository is the cloud-hosted directory containing all of your project files as well as their version history.
+title 0
+domestic_gross 0
+foreign_gross 0
+year 0
+dtype: int64
 
-This repository link will be the project link that you include on your resume, LinkedIn, etc. for prospective employers to view your work. Note that we typically recommend that 3 links are highlighted (out of 5 projects) so don't stress too much about getting this one to be perfect! There will also be time after graduation for cosmetic touch-ups.
+False 3387
+dtype: int64
 
-A professional GitHub repository has:
 
-1. `README.md`
-    * A file called `README.md` at the root of the repository directory, written in Markdown; this is what is rendered when someone visits the link to your repository in the browser
-    * This file contains these sections:
-       * Overview
-       * Business Understanding
-          * Include stakeholder and key business questions
-       * Data Understanding and Analysis
-          * Source of data
-          * Description of data
-          * Three visualizations (the same visualizations presented in the slides and notebook)
-       * Conclusion
-          * Summary of conclusions including three relevant findings
-2. Commit history
-   * Progression of updates throughout the project time period, not just immediately before the deadline
-   * Clear commit messages
-   * Commits from all team members (if a group project)
-3. Organization
-   * Clear folder structure
-   * Clear names of files and folders
-   * Easily-located notebook and presentation linked in the README
-4. Notebook(s)
-   * Clearly-indicated final notebook that runs without errors
-   * Exploratory/working notebooks (can contain errors, redundant code, etc.) from all team members (if a group project)
-5. `.gitignore`
-   * A file called `.gitignore` at the root of the repository directory instructs Git to ignore large, unnecessary, or private files
-     * Because it starts with a `.`, you will need to type `ls -a` in the terminal in order to see that it is there
-   * GitHub maintains a [Python .gitignore](https://github.com/github/gitignore/blob/master/Python.gitignore) that may be a useful starting point for your version of this file
-   * To tell Git to ignore more files, just add a new line to `.gitignore` for each new file name
-     * Consider adding `.DS_Store` if you are using a Mac computer, as well as project-specific file names
-     * If you are running into an error message because you forgot to add something to `.gitignore` and it is too large to be pushed to GitHub [this blog post](https://medium.com/analytics-vidhya/tutorial-removing-large-files-from-git-78dbf4cf83a?sk=c3763d466c7f2528008c3777192dfb95)(friend link) should help you address this
+# Identifying the relationship between foreign gross and domestic gross
+# Creating a scatter plot
+top_20_df.plot.scatter("foreign_gross","domestic_gross")
+plt.ylabel("Domestic Gross")
+plt.xlabel("Foreign Gross")
+plt.title("Domestic Gross Vs Foreign Gross")
+plt.show
 
-You wil submit a link to the GitHub repository on Canvas.
 
-See the [Grading](#grading) section for further explanation of how the GitHub repository will be graded.
+2. IMDB SQLITE DATABASE
+In this Database with several tables, I picked only two tables; movie_ratings and movie_basics which contain valuable data such as average rating and number of votes which will be used as metrics of movie perfomance.
+I will join the two tables into one using the key "movie_id" which uniquely identifies the movies. Everything from the two tables will be selected and start filtering on irrelevant data and columns.
 
-For further reading on creating professional notebooks and `README`s, check out [this reading](https://github.com/learn-co-curriculum/dsc-repo-readability-v2-2).
+conn=sqlite3.connect("zippedData/im.db/im.db")
+imdb_df=pd.read_sql("""
+SELECT *
+FROM movie_ratings
+JOIN movie_basics
+ON movie_ratings.movie_id= movie_basics.movie_id
+""",conn)
+imdb_df
 
-## Grading
+Size of the IMDB dataset
+The dataframe has 73856 rows and 9 columns
 
-***To pass this project, you must pass each project rubric objective.*** The project rubric objectives for Phase 1 are:
+Dropping duplicating and irrelevant columns
+In this dataframe that I have obtained from an SQLite database, movie_id columns appears twice and thus the need to drop one or even both since they are not that significant in my analysis.
 
-1. Attention to Detail
-2. Data Communication
-3. Authoring Jupyter Notebooks
-4. Data Manipulation and Analysis with `pandas`
+#Dropping movie_id columns
+imdb_df.drop(columns=["movie_id"],inplace=True)
 
-### Attention to Detail
+imdb_df
 
-If you have searched for a job, you have probably seen "attention to detail" appear on a job description. In a [survey of hiring managers](https://www.payscale.com/data-packages/job-skills), fully 56% of them said they felt that recent college grads lacked this skill. So, what does "attention to detail" mean, and how will you be graded on it at Flatiron School?
+Checking for duplicates in the data
 
-Attention to detail means that you accomplish tasks thoroughly and accurately. You need to understand what is being asked of you, and double-check that your work fulfills all of the requirements. This will help make you a "no-brainer hire" because it helps employers feel confident that they will not have to double-check your work. For further reading, check out [this article](https://www.indeed.com/career-advice/career-development/attention-to-detail) from Indeed.
+imdb_df.duplicated().value_counts()
 
-***Attention to detail will be graded based on the project checklist. In Phase 1, you need to complete 60% (6 out of 10) or more of the checklist elements in order to pass the Attention to Detail objective.*** The standard for passing the Attention to Detail objective will increase with each Phase, until you are required to complete all elements to pass Phase 5 (Capstone).
 
-The [Phase 1 Project Checklist](https://docs.google.com/document/d/1PjJwdek9EeIy9tYdvlC4bvKvwYcI2xHO1wEMENfqo5E/edit?usp=sharing) is linked here as well as directly in Canvas. The elements highlighted in yellow are the elements you need to complete in order to pass this objective. We recommend that you make your own copy of this document, so that you can check off each element as you complete it. The checklist also contains more specific, detailed guidance about the deliverables described above.
+Plotting Top 15 movie genres with many votes
 
-Below are the definitions of each rubric level for this objective. This information is also summarized in the rubric, which is attached to the project submission assignment.
+#Sorting top 15 movies with high number of votes in descending order
+top_15_df=imdb_df.sort_values("numvotes", ascending=False).head(10)
+In [31]:
+# Creating a bar chart
+top_15_df.plot.bar("genres","numvotes")
+plt.xlabel("Genres")
+plt.ylabel("No of votes")
+plt.title("Genres vs number of votes")
+plt.show
 
-#### Exceeds Objective
-70% or more of the project checklist items are complete
+3. THE MOVIE DATABASE
+This dataset will be important in obtaining data for movie popularity, vote average and the vote count of different movies which will be vital in the analysis
 
-#### Meets Objective (Passing Bar)
-60% of the project checklist items are complete
+tmdb_df=pd.read_csv("zippedData/tmdb.movies.csv.gz", index_col=0)
+#index_col=0 was used to avoid having two index columns
 
-#### Approaching Objective
-50% of the project checklist items are complete
+tmdb_df
+Size of the the movie database
+The dataframe has 26517 rows and 9 columns
 
-#### Does Not Meet Objective
-40% or fewer of the project checklist items are complete
+#The next step will be dropping unnecessary columns by creating a list of unnecessary col
+umns
 
-### Data Communication
+unnecessary_cols=["genre_ids","id","original_language","original_title","release_date"]
 
-Communication is another key "soft skill". In [the same survey mentioned above](https://www.payscale.com/data-packages/job-skills), 46% of hiring managers said that recent college grads were missing this skill.
+#Dropping the columns
+tmdb_df.drop(columns=unnecessary_cols,inplace=True)
 
-Because "communication" can encompass such a wide range of contexts and skills, we will specifically focus our Phase 1 objective on Data Communication. We define Data Communication as:
+Checking for missing values
 
-> Communicating basic data analysis results to diverse audiences via writing and live presentation
+tmdb_df.isna().sum()
 
-To further define some of these terms:
+### There are no missing values in the movie database
+Checking for duplicates
 
-* By "basic data analysis" we mean that you are filtering, sorting, grouping, and/or aggregating the data in order to answer business questions. This project does not involve inferential statistics or machine learning, although descriptive statistics such as measures of central tendency are encouraged.
-* By "results" we mean your ***three visualizations and recommendations***.
-* By "diverse audiences" we mean that your presentation and notebook are appropriately addressing a business and data science audience, respectively.
+tmdb_df.duplicated().value_counts()
 
-Below are the definitions of each rubric level for this objective. This information is also summarized in the rubric, which is attached to the project submission assignment.
+# There are 9428 duplicated values in the dataframe
 
-#### Exceeds Objective
-Creates and describes appropriate visualizations for given business questions, where each visualization fulfills all elements of the checklist
+#Dropping the duplicates
+tmdb_df=tmdb_df.drop_duplicates()
 
-> This "checklist" refers to the Data Visualization checklist within the larger Phase 1 Project Checklist
+#confirming that the duplicates were dropped
+tmdb_df.duplicated().value_counts()
 
-#### Meets Objective (Passing Bar)
-Creates and describes appropriate visualizations for given business questions
+# The duplicates have been gotten rid of
 
-> This objective can be met even if all checklist elements are not fulfilled. For example, if there is some illegible text in one of your visualizations, you can still meet this objective
+Top 10 popular movies
 
-#### Approaching Objective
-Creates visualizations that are not related to the business questions, or uses an inappropriate type of visualization
+#sorting top 10
+top_10=tmdb_df.sort_values("popularity", ascending=False).head(10)
+top_10
 
-> Even if you create very compelling visualizations, you cannot pass this objective if the visualizations are not related to the business questions
+top_10.plot.bar("title", "popularity")
+plt.xlabel("Movie Title")
+plt.ylabel("popularity")
+plt.title("Top 10 popular movies")
 
-> An example of an inappropriate type of visualization would be using a line graph to show the correlation between two independent variables, when a scatter plot would be more appropriate
+Correlation between Vote count and Movie popularity
 
-#### Does Not Meet Objective
-Does not submit the required number of visualizations
+# plotting a scatter plot
+plt.scatter(tmdb_df["vote_count"], tmdb_df["popularity"])
+# Add axis labels and a title to the plot
+plt.ylabel("popularity")
+plt.xlabel("vote_count")
+plt.title("Number of Votes vs. Average Rating")
+# Show the plot
+plt.show()
 
-### Authoring Jupyter Notebooks
+DISCUSSION
+There is a low positive correlation between popularity and vote count of movies
 
-According to [Kaggle's 2020 State of Data Science and Machine Learning Survey](https://www.kaggle.com/kaggle-survey-2020), 74.1% of data scientists use a Jupyter development environment, which is more than twice the percentage of the next-most-popular IDE, Visual Studio Code. Jupyter Notebooks allow for reproducible, skim-able code documents for a data science audience. Comfort and skill with authoring Jupyter Notebooks will prepare you for job interviews, take-home challenges, and on-the-job tasks as a data scientist.
+MERGING THE DATASETS
+The three datasets will then be merged for Exploratory Data Analysis to take place. Merging the datasets is vital since data will be combined from different sources to gain a more concise and complete information. It will also
+increase the sample size thus improving the accuracy and reliability of my analysis.
 
-The key feature that distinguishes *authoring Jupyter Notebooks* from simply *writing Python code* is the fact that Markdown cells are integrated into the notebook along with the Python cells in a notebook. You have seen examples of this throughout the curriculum, but now it's time for you to practice this yourself!
+to_merge=[bom_df, imdb_df, tmdb_df]
+merged_df=pd.concat(to_merge)
 
-Below are the definitions of each rubric level for this objective. This information is also summarized in the rubric, which is attached to the project submission assignment.
+irrelevant_columns=["year","primary_title","original_title","start_year"]
+merged_df.drop(columns=irrelevant_columns, inplace=True)
+merged_df
 
-#### Exceeds Objective
-Uses Markdown and code comments to create a well-organized, skim-able document that follows all best practices
 
-> Refer to the [repository readability reading](https://github.com/learn-co-curriculum/dsc-repo-readability-v2-2) for more tips on best practices
+FINDINGS AND CONCLUSIONS
+Different observations were noted when perfoming exploratory data analysis. These findings are explained below;
+1. It was observed there was low positive correlation between domestic gross and foreign gross, which meant there little relationship between the two. Movies released between 2011 to 2018 earned the highest foreign gross.
+2. While analysing the top 15 genres with top number of votes received, it was observed that Action, Adventure, Sci-fi, Thriller, Drama, Comedy and Crime attracted a lot of insights from different people who voted.
+3. While analysis top 10 popular movies, it was observed that sci-fi and action movies were the most popular, with Avengers: Infinity war topping with 80.773% popularity followed closely by John Wick with 78.123% and Spider Man: Into the spider verse with 60.534% popularity.
+4. The final observation was that there was low positive correlation between number of votes and average rating of movies.
 
-#### Meets Objective (Passing Bar)
-Uses some Markdown to create an organized notebook, with an introduction at the top and a conclusion at the bottom
 
-#### Approaching Objective
-Uses Markdown cells to organize, but either uses only headers and does not provide any explanations or justifications, or uses only plaintext without any headers to segment out sections of the notebook
 
-> Headers in Markdown are delineated with one or more `#`s at the start of the line. You should have a mixture of headers and plaintext (text where the line does not start with `#`)
+RECOMMENDATIONS
+Different recommendations were derived from the findings;
+1.) It would be imperative for the stakeholders and top management at Microsoft to prioritise production of movies similar to those released between the year 2011 and 2018 since they earned the highest foreign gross.
+The top four earners included; a) Harry potter and the deathly hallows part 2 (2011)
+b) Avengers: Age of Ultron (2015)
+c) Marvel's The Avengers (2012)
+d) Jurrasic World: Fallen Kingdom (2018)
+Since the top four earners were all Sci-fi movies, then Microsoft would have a great return on investment by creating Sci-Fi movies.
+Foreign gross would lead to higher international sales. Higher foreign gross means there is also higher domestic sales, but higher domestic gross does not equate to higher foreign gross since from the scatter plot there is low positive relationship between the two variables.
 
-#### Does Not Meet Objective
-Does not submit a notebook, or does not use Markdown cells at all to organize the notebook
+2.) For Microsoft studio to create awareness of their existence and new products, it is recommended they focus more on Sci-Fi, Action, Adventure, Thriller, Drama, Crime and Comedy since they attracted the most votes from movie fans leading to high insights.
 
-### Data Manipulation and Analysis with `pandas`
+3.) For Microsoft to gain popularity and return on investments they should prioritise Sci-fi and Action movies
+such as Avengers: Infinity war topping with 80.773% popularity, John Wick with 78.123% and Spider Man: Into the spider verse with 60.534% popularity. This would ensure that the created movies at Microsoft studio attract
+great popularity leading to high international sales.
 
-`pandas` is a very popular data manipulation library, with over 2 million downloads on Anaconda (`conda install pandas`) and over 19 million downloads on PyPI (`pip install pandas`) at the time of this writing. In our own internal data, we see that the overwhelming majority of Flatiron School DS grads use `pandas` on the job in some capacity.
-
-Unlike in base Python, where the Zen of Python says "There should be one-- and preferably only one --obvious way to do it", there is often more than one valid way to do something in `pandas`. However there are still more efficient and less efficient ways to use it. Specifically, the best `pandas` code is *performant* and *idiomatic*.
-
-Performant `pandas` code utilizes methods and broadcasting rather than user-defined functions or `for` loops. For example, if you need to strip whitespace from a column containing string data, the best approach would be to use the [`pandas.Series.str.strip` method](https://pandas.pydata.org/docs/reference/api/pandas.Series.str.strip.html) rather than writing your own function or writing a loop. Or if you want to multiply everything in a column by 100, the best approach would be to use broadcasting (e.g. `df["column_name"] * 100`) instead of a function or loop. You can still write your own functions if needed, but only after checking that there isn't a built-in way to do it.
-
-Idiomatic `pandas` code has variable names that are meaningful words or abbreviations in English, that are related to the purpose of the variables. You can still use `df` as the name of your DataFrame if there is only one main DataFrame you are working with, but as soon as you are merging multiple DataFrames or taking a subset of a DataFrame, you should use meaningful names. For example, `df2` would not be an idiomatic name, but `movies_and_reviews` could be.
-
-We also recommend that you rename all DataFrame columns so that their meanings are more understandable, although it is fine to have acronyms. For example, `"col1"` would not be an idiomatic name, but `"USD"` could be.
-
-Below are the definitions of each rubric level for this objective. This information is also summarized in the rubric, which is attached to the project submission assignment.
-
-#### Exceeds Objective
-Uses `pandas` to prepare data and answer business questions in an idiomatic, performant way
-
-#### Meets Objective (Passing Bar)
-Successfully uses `pandas` to prepare data in order to answer business questions
-
-> This includes projects that _occasionally_ use base Python when `pandas` methods would be more appropriate (such as using `enumerate()` on a DataFrame), or occasionally performs operations that do not appear to have any relevance to the business questions
-
-#### Approaching Objective
-Uses `pandas` to prepare data, but makes significant errors
-
-> Examples of significant errors include: the result presented does not actually answer the stated question, the code produces errors, the code _consistently_ uses base Python when `pandas` methods would be more appropriate, or the submitted notebook contains significant quantities of code that is unrelated to the presented analysis (such as copy/pasted code from the curriculum or StackOverflow)
-
-#### Does Not Meet Objective
-Unable to prepare data using `pandas`
-
-> This includes projects that successfully answer the business questions, but do not use `pandas` (e.g. use only base Python, or use some other tool like R, Tableau, or Excel)
-
-## Getting Started
-
-Please start by reviewing the contents of this project description. If you have any questions, please ask your instructor ASAP.
-
-Next, you will need to complete the [***Project Proposal***](#project_proposal) which must be reviewed by your instructor before you can continue with the project.
-
-Then, you will need to create a GitHub repository. There are three options:
-
-1. Look at the [Phase 1 Project Templates and Examples repo](https://github.com/learn-co-curriculum/dsc-project-template) and follow the directions in the MVP branch.
-2. Fork the [Phase 1 Project Repository](https://github.com/learn-co-curriculum/dsc-phase-1-project-v2-4), clone it locally, and work in the `student.ipynb` file. Make sure to also add and commit a PDF of your presentation to your repository with a file name of `presentation.pdf`.
-3. Create a new repository from scratch by going to [github.com/new](https://github.com/new) and copying the data files from one of the above resources into your new repository. This approach will result in the most professional-looking portfolio repository, but can be more complicated to use. So if you are getting stuck with this option, try one of the above options instead.
-
-## Summary
-
-This project will give you a valuable opportunity to develop your data science skills using real-world data. The end-of-phase projects are a critical part of the program because they give you a chance to bring together all the skills you've learned, apply them to realistic projects for a business stakeholder, practice communication skills, and get feedback to help you improve. You've got this!
