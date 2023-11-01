@@ -29,24 +29,7 @@ I will first start by reading the dataset inorder to understand the data and the
 The above dataset has 3387 rows and 5 columns
 
 
-### Checking for missing values
-
-Missing values can occur for a variety of reasons, including measurement error, data entry errors and non-response.
-The presence of missing data can cause biased estimates, inaccurate results, misleading visualisations as well as a loss of information.
-By checking, identifying and addressing missing values before analysis, I will be able to increase the accuracy and reliability of my results
-
-
-
-### Filling missing values in domestic_gross with its mean
-
-This column cannot be dropped as it is of great significance as a metric for movie perfomance in terms of gross revenue.
-Therefore missing values will be filled with the mean of domestic_gross
-
-
-# domestic_gross has 0 missing values after filling with mean
-
-
-### Addressing missing values in foreign_gross
+Addressing missing values in foreign_gross
 For foreign gross I made an assumption that the missing values are as a result of the movies having 0 international sales
 This might have been due to no international releases for those movies that have missing values
 Therefore the best strategy was to fill with 0s since this column is vital in the analysis and cannot be dropped
@@ -54,22 +37,15 @@ Therefore the best strategy was to fill with 0s since this column is vital in th
 
 # There are no missing values in the dataframe now
 
-### Checking for duplicates in the data
+Checking for duplicates in the data
 
 By identifying and removing duplicates, I want to ensure that each observation in the Box office Mojo dataset is represented only once.
 This will help to ensure data accuracy, efficiency, and consistency, and thus help in obtaining reliable and meaningful insights from the data.
 
 
-
-### Identfying top 20 movies with high foreign gross
-
-
-
-# Identifying the relationship between foreign gross and domestic gross
+Identifying the relationship between foreign gross and domestic gross
 
  Creating a scatter plot
-
-
 
 ### 2. IMDB SQLITE DATABASE
 
@@ -89,7 +65,6 @@ My columns of interest are the averagerating and numvotes which will be used as 
 #### Decision made
 
 Runtime_minutes has a total of 7620 missing values and genres 804 missing values. Runtime minutes will be dropped since there is no much use in this analysis and genres will be kept since it will enable me to understand the kind of movie genres that perfomed well.
-
 
 
 ### 3. THE MOVIE DATABASE
