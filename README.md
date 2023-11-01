@@ -13,12 +13,6 @@ Microsoft stakeholders and top management are finding it hard understanding the 
 
 Therefore this project is focused on investigating the above metrics inorder to come up with a decisive action to enable the microsoft studio to create only movies that are going to perform well internationally and be a good investment plan. Only the kind of movies that attract great insights through high number of votes, high foreign gross and higher ratings will be prioritised in the production studio.
 
-# importing the python libraries that I will use for this project
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-import sqlite3
 
 ### Data Understanding
 
@@ -29,8 +23,6 @@ This will present a clear picture of how different movies performed and thus lea
 ### 1. BOX OFFICE MOJO DATASET
 I will first start by reading the dataset inorder to understand the data and the kind of measurements that I will use to determine the success of movies
 
-bom_df=pd.read_csv("zippedData/bom.movie_gross.csv.gz")
-bom_df
 
 #### Size of the dataset
 
@@ -43,39 +35,13 @@ Missing values can occur for a variety of reasons, including measurement error, 
 The presence of missing data can cause biased estimates, inaccurate results, misleading visualisations as well as a loss of information.
 By checking, identifying and addressing missing values before analysis, I will be able to increase the accuracy and reliability of my results
 
-# getting the sum of all missing values in the dataframe
-bom_df.isna().sum()
 
-    title                0
-    studio               5
-    domestic_gross      28
-    foreign_gross     1350
-    year                 0
-    dtype: int64
-
-# From the dataframe studio column has five missing values, domestic_gross 28 missing values and 
-# foreign_gross a total of 1350 missing values
-
-# since studio column has no much significance in this analysis, I decided to drop it
-
-bom_df.drop(columns=["studio"], inplace=True)
-
-bom_df
 
 ### Filling missing values in domestic_gross with its mean
 
 This column cannot be dropped as it is of great significance as a metric for movie perfomance in terms of gross revenue.
 Therefore missing values will be filled with the mean of domestic_gross
 
-bom_df["domestic_gross"].fillna(bom_df["domestic_gross"].mean(),inplace=True)
-bom_df
-bom_df.isna().sum()
-
-    title                0
-    domestic_gross       0
-    foreign_gross     1350
-    year                 0
-    dtype: int64
 
 # domestic_gross has 0 missing values after filling with mean
 
@@ -85,17 +51,6 @@ For foreign gross I made an assumption that the missing values are as a result o
 This might have been due to no international releases for those movies that have missing values
 Therefore the best strategy was to fill with 0s since this column is vital in the analysis and cannot be dropped
 
-bom_df["foreign_gross"].fillna(0, inplace=True)
-
-bom_df
-
-bom_df.isna().sum()
-
-    title             0
-    domestic_gross    0
-    foreign_gross     0
-    year              0
-    dtype: int64
 
 # There are no missing values in the dataframe now
 
@@ -104,33 +59,17 @@ bom_df.isna().sum()
 By identifying and removing duplicates, I want to ensure that each observation in the Box office Mojo dataset is represented only once.
 This will help to ensure data accuracy, efficiency, and consistency, and thus help in obtaining reliable and meaningful insights from the data.
 
-bom_df.duplicated().value_counts()
 
-    False    3387
-    dtype: int64
-
-
-# False indicates that the data has no duplicates
 
 ### Identfying top 20 movies with high foreign gross
 
-# Converting foreign gross to numeric type
 
-bom_df["foreign_gross"] = pd.to_numeric(bom_df["foreign_gross"], errors="coerce")
-
-# Sorting
-top_20_df=bom_df.sort_values("foreign_gross", ascending=False).head(20)
-top_20_df
 
 # Identifying the relationship between foreign gross and domestic gross
 
-# Creating a scatter plot
+ Creating a scatter plot
 
-top_20_df.plot.scatter("foreign_gross","domestic_gross")
-plt.ylabel("Domestic Gross")
-plt.xlabel("Foreign Gross")
-plt.title("Domestic Gross Vs Foreign Gross")
-plt.show
+
 
 ### 2. IMDB SQLITE DATABASE
 
@@ -139,73 +78,19 @@ In this Database with several tables, I picked only two tables; movie_ratings an
 I will join the two tables into one using the key "movie_id" which uniquely identifies the movies.
 Everything from the two tables will be selected and start filtering on irrelevant data and columns.
 
-conn=sqlite3.connect("zippedData/im.db/im.db")
-imdb_df=pd.read_sql("""
-SELECT *
-FROM movie_ratings
-JOIN movie_basics 
- ON movie_ratings.movie_id= movie_basics.movie_id
-""",conn)
-
-imdb_df
-
-#### Size of the IMDB dataset
-
-The dataframe has 73856 rows and 9 columns
 
 ### Dropping duplicating and irrelevant columns
 
 In this dataframe that I have obtained from an SQLite database, movie_id columns appears twice and thus the need to drop one or even both since they are not that significant in my analysis.
 
-#Dropping movie_id columns
-imdb_df.drop(columns=["movie_id"],inplace=True)
-imdb_df
-
 My columns of interest are the averagerating and numvotes which will be used as metrics for movie perfomance
 
-### Checking for missing values
-
-imdb_df.isna().sum()
-
-    averagerating         0
-    numvotes              0
-    primary_title         0
-    original_title        0
-    start_year            0
-    runtime_minutes    7620
-    genres              804
-    dtype: int64
 
 #### Decision made
 
 Runtime_minutes has a total of 7620 missing values and genres 804 missing values. Runtime minutes will be dropped since there is no much use in this analysis and genres will be kept since it will enable me to understand the kind of movie genres that perfomed well.
 
-imdb_df.drop(columns=["runtime_minutes"], inplace=True)
 
-imdb_df
-
-### Checking for duplicates in the data
-
-imdb_df.duplicated().value_counts()
-
-    False    73856
-    dtype: int64
-
-# This indicates that there are no duplicates in the data
-
-
-### Plotting Top 15 movie genres with many votes 
-
-#Sorting top 15 movies with high number of votes in descending order
-
-top_15_df=imdb_df.sort_values("numvotes", ascending=False).head(10)
-
-# Creating a bar chart
-top_15_df.plot.bar("genres","numvotes")
-plt.xlabel("Genres")
-plt.ylabel("No of votes")
-plt.title("Genres vs number of votes")
-plt.show
 
 ### 3. THE MOVIE DATABASE
 
@@ -222,64 +107,9 @@ The dataframe has 26517 rows and 9 columns
 
 #The next step will be dropping unnecessary columns by creating a list of unnecessary columns
 unnecessary_cols=["genre_ids","id","original_language","original_title","release_date"]
-#Dropping the columns
-tmdb_df.drop(columns=unnecessary_cols,inplace=True)
 
-tmdb_df
 
-#### Checking for missing values
 
-tmdb_df.isna().sum()
-
-    popularity      0
-    title           0
-    vote_average    0
-    vote_count      0
-    dtype: int64
-
-### There are no missing values in the movie database
-
-#### Checking for duplicates
-
-tmdb_df.duplicated().value_counts()
-
-    False    25493
-    True      1024
-    dtype: int64
-
-# There are 9428 duplicated values in the dataframe
-
-#Dropping the duplicates
-
-tmdb_df=tmdb_df.drop_duplicates()
-
-#confirming that the duplicates were dropped
-tmdb_df.duplicated().value_counts()
-
-    False    25493
-    dtype: int64
-
-### Top 10 popular movies
-
-top_10=tmdb_df.sort_values("popularity", ascending=False).head(10)
-top_10
-
-top_10.plot.bar("title", "popularity")
-plt.xlabel("Movie Title")
-plt.ylabel("popularity")
-plt.title("Top 10 popular movies")
-
-### Correlation between Vote count and Movie popularity
-# plotting a scatter plot
-plt.scatter(tmdb_df["vote_count"], tmdb_df["popularity"])
-
-# Add axis labels and a title to the plot
-plt.ylabel("popularity")
-plt.xlabel("vote_count")
-plt.title("Number of Votes vs. Average Rating")
-
-# Show the plot
-plt.show()
 
 ##### DISCUSSION
 
@@ -291,13 +121,7 @@ The three datasets will then be merged for Exploratory Data Analysis to take pla
 Merging the datasets is vital since data will be combined from different sources to gain a more concise and complete information.
 It will also increase the sample size thus improving the accuracy and reliability of my analysis.
 
-to_merge=[bom_df, imdb_df, tmdb_df]
 
-merged_df=pd.concat(to_merge)
-
-irrelevant_columns=["year","primary_title","original_title","start_year"]
-merged_df.drop(columns=irrelevant_columns, inplace=True)
-merged_df
 
 ### FINDINGS AND CONCLUSIONS
 
